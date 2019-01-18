@@ -1,0 +1,2 @@
+# scm-groupmanager-plugin
+
