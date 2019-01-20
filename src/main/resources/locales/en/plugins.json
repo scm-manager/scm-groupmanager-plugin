@@ -1,5 +1,12 @@
 {
   "scm-groupmanager-plugin": {
-
-  }
-}
+    "permissions": {
+      "group": {
+        "manage": {
+          "*": {
+            "displayName": "Manage All Groups",
+            "description": "May modify the Group Manager list of all Groups"
+          }
+        }
+      }
+    }
