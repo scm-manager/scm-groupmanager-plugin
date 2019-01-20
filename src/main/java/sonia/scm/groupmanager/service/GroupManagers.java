@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -15,13 +16,8 @@ import java.util.List;
 public class GroupManagers {
 
   /**
-   * the id of the managed group
-   */
-  private String groupName;
-
-  /**
    * the user ids of the group manager
    */
-  private List<String> managers;
+  private List<String> managers = new ArrayList<>();
 
 }

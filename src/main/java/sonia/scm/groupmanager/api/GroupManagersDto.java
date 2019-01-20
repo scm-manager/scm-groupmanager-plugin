@@ -1,4 +1,4 @@
-package sonia.scm.groupmanager.dto;
+package sonia.scm.groupmanager.api;
 
 import de.otto.edison.hal.HalRepresentation;
 import de.otto.edison.hal.Links;
@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class GroupManagersDto extends HalRepresentation {
 
-  private String groupName;
   private List<String> managers;
 
   @Override
