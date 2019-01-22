@@ -41,7 +41,7 @@ public class GroupManagerRealm extends AuthorizingRealm {
     if (!groups.isEmpty()) {
       authorizationInfo.addStringPermission("group:list");
       groups.forEach(groupName -> {
-        authorizationInfo.addStringPermission("group:read,modify,manage:" + groupName);
+        authorizationInfo.addStringPermission("group:read,modify,manage,delete:" + groupName);
         log.info("apply groupmanager privileges for user {} and group {}", username, groupName);
       });
     } else {
