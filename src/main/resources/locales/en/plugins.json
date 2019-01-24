@@ -1,5 +1,23 @@
 {
   "scm-groupmanager-plugin": {
-
+    "add-manager-form": {
+      "header": "Group Manager List",
+      "success-message": "The update was successful!",
+      "help-text": "The list of the group managers",
+      "add-manager": "Add group manager",
+      "submit": "Submit"
+    },
+    "add-member-button": {
+      "label": "Add Manager"
+    },
+    "add-member-textfield": {
+      "label": "Add manager",
+      "error": "Invalid user name"
+    },
+    "add-member-autocomplete": {
+      "placeholder": "Enter manager",
+      "loading": "Loading...",
+      "no-options": "No suggestion available"
+    }
   }
 }
