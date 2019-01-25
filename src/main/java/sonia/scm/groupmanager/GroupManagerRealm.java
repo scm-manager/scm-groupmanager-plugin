@@ -35,17 +35,17 @@ public class GroupManagerRealm extends AuthorizingRealm {
   @Override
   protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
     String username = principals.getPrimaryPrincipal().toString();
-    log.info("search groupmanager privileges for user {}", username);
+   log.trace("search groupmanager privileges for user {}", username);
     List<String> groups = service.getManagedGroups(username);
     SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
     if (!groups.isEmpty()) {
       authorizationInfo.addStringPermission("group:list");
       groups.forEach(groupName -> {
-        authorizationInfo.addStringPermission("group:read,modify,manage,delete:" + groupName);
-        log.info("apply groupmanager privileges for user {} and group {}", username, groupName);
+        authorizationInfo.addStringPermission("group:read,modify,manage:" + groupName);
+        log.trace("apply groupmanager privileges for user {} and group {}", username, groupName);
       });
     } else {
-      log.info("the user {} has no groupmanager privileges ", username);
+      log.trace("the user {} has no groupmanager privileges ", username);
     }
     return authorizationInfo;
   }
