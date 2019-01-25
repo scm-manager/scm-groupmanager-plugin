@@ -28,7 +28,7 @@ class GroupManagerRealmTest {
     PrincipalCollection principals = new SimplePrincipalCollection("user_1", "DefaultRealm");
     when(service.getManagedGroups("user_1")).thenReturn(Lists.newArrayList("group_1"));
     AuthorizationInfo info = groupManagerRealm.doGetAuthorizationInfo(principals);
-    assertThat(info.getStringPermissions()).containsExactlyInAnyOrder("group:read,modify,manage,delete:group_1", "group:list");
+    assertThat(info.getStringPermissions()).containsExactlyInAnyOrder("group:read,modify,manage:group_1", "group:list");
   }
 
   @Test
