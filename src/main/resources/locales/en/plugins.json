@@ -18,14 +18,14 @@
       "placeholder": "Enter manager",
       "loading": "Loading...",
       "no-options": "No suggestion available"
-    },
-    "permissions" : {
-      "group": {
-        "manage": {
-          "*": {
-            "displayName": "manage groups",
-            "description": "May manage groups"
-          }
+    }
+  },
+  "permissions" : {
+    "group": {
+      "manage": {
+        "*": {
+          "displayName": "Manage groups",
+          "description": "May manage groups"
         }
       }
     }
