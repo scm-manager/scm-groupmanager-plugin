@@ -3,21 +3,21 @@
     "add-manager-form": {
       "header": "Group Manager List",
       "success-message": "The update was successful!",
-      "help-text": "The list of the group managers",
-      "add-manager": "Add group manager",
+      "help-text": "The list of the Group Managers",
+      "add-manager": "Add Group Manager",
       "submit": "Submit"
     },
     "add-member-button": {
-      "label": "Add Manager"
+      "label": "Add Group Manager"
     },
     "add-member-textfield": {
-      "label": "Add manager",
+      "label": "Add Group Manager",
       "error": "Invalid user name"
     },
     "add-member-autocomplete": {
-      "placeholder": "Enter manager",
+      "placeholder": "Enter username",
       "loading": "Loading...",
-      "no-options": "No suggestion available"
+      "no-options": "No suggestions available"
     }
   },
   "permissions" : {

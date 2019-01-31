@@ -1,0 +1,33 @@
+{
+  "scm-groupmanager-plugin": {
+    "add-manager-form": {
+      "header": "Group Manager Liste",
+      "success-message": "Das Update war erfolgreich.",
+      "help-text": "Die Liste der Group Manager.",
+      "add-manager": "Group Manager hinzufügen",
+      "submit": "Speichern"
+    },
+    "add-member-button": {
+      "label": "Group Manager hinzufügen"
+    },
+    "add-member-textfield": {
+      "label": "Group Manager hinzufügen",
+      "error": "Ungültiger Benutzername"
+    },
+    "add-member-autocomplete": {
+      "placeholder": "Benutzername einfügen",
+      "loading": "Lade...",
+      "no-options": "Keine Vorschläge verfügbar"
+    }
+  },
+  "permissions" : {
+    "group": {
+      "manage": {
+        "*": {
+          "displayName": "Gruppen verwalten",
+          "description": "Darf Gruppen verwalten"
+        }
+      }
+    }
+  }
+}
