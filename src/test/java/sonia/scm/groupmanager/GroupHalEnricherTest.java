@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import sonia.scm.api.v2.resources.LinkAppender;
-import sonia.scm.api.v2.resources.LinkEnricherContext;
+import sonia.scm.api.v2.resources.HalAppender;
+import sonia.scm.api.v2.resources.HalEnricherContext;
 import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.group.Group;
 import sonia.scm.groupmanager.service.GroupManagerService;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
 
 @SubjectAware(configuration = "classpath:sonia/scm/groupmanager/shiro.ini")
 @RunWith(MockitoJUnitRunner.class)
-public class GroupLinkEnricherTest {
+public class GroupHalEnricherTest {
 
   private Provider<ScmPathInfoStore> scmPathInfoStoreProvider;
 
@@ -33,14 +33,14 @@ public class GroupLinkEnricherTest {
   public ShiroRule shiro = new ShiroRule();
 
   @Mock
-  private LinkAppender appender;
-  private GroupLinkEnricher enricher;
+  private HalAppender appender;
+  private GroupHalEnricher enricher;
 
   @Mock
   private GroupManagerService service;
 
 
-  public GroupLinkEnricherTest() {
+  public GroupHalEnricherTest() {
     // cleanup state that might have been left by other tests
     ThreadContext.unbindSecurityManager();
     ThreadContext.unbindSubject();
@@ -57,25 +57,25 @@ public class GroupLinkEnricherTest {
   @Test
   @SubjectAware(username = "gm", password = "secret")
   public void shouldEnrichGroup() {
-    enricher = new GroupLinkEnricher(scmPathInfoStoreProvider, service);
+    enricher = new GroupHalEnricher(scmPathInfoStoreProvider, service);
     Group group = new Group("xml", "group_1");
-    LinkEnricherContext context = LinkEnricherContext.of(group);
+    HalEnricherContext context = HalEnricherContext.of(group);
     doCallRealMethod().when(service).isPermitted("group_1");
 
     enricher.enrich(context, appender);
-    verify(appender).appendOne("managers", "https://scm-manager.org/scm/api/v2/plugins/groupmanager/group_1");
+    verify(appender).appendLink("managers", "https://scm-manager.org/scm/api/v2/plugins/groupmanager/group_1");
   }
 
   @Test
   @SubjectAware(username = "unpriv", password = "secret")
   public void shouldNotEnrichGroupBecauseOfMissingPermission() {
-    enricher = new GroupLinkEnricher(scmPathInfoStoreProvider, service);
+    enricher = new GroupHalEnricher(scmPathInfoStoreProvider, service);
     Group group = new Group("xml", "group_1");
-    LinkEnricherContext context = LinkEnricherContext.of(group);
+    HalEnricherContext context = HalEnricherContext.of(group);
     doCallRealMethod().when(service).isPermitted("group_1");
 
     enricher.enrich(context, appender);
-    verify(appender, never()).appendOne("managers", "https://scm-manager.org/scm/api/v2/plugins/groupmanager/group_1");
+    verify(appender, never()).appendLink("managers", "https://scm-manager.org/scm/api/v2/plugins/groupmanager/group_1");
   }
 
 }
