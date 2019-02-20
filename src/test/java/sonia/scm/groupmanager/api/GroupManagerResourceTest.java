@@ -18,6 +18,7 @@ import sonia.scm.groupmanager.service.GroupManagers;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +56,7 @@ public class GroupManagerResourceTest {
 
   @Test
   @SubjectAware(username = "trillian", password = "secret")
-  public void shouldGetGroupManagers() throws URISyntaxException {
+  public void shouldGetGroupManagers() throws URISyntaxException, UnsupportedEncodingException {
     GroupManagers groupManagers = new GroupManagers();
     String groupName = "group_1";
     groupManagers.setManagers(Lists.newArrayList("user_1", "user_2"));

@@ -37,7 +37,7 @@ const GroupManagerNavLink = ({url, group}) => {
 };
 
 binder.bind(
-  "group.navigation",
+  "group.setting",
   GroupManagerNavLink,
   groupmanagerPredicate
 );
