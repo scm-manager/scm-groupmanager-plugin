@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sonia.scm.store.ConfigurationStore;
 import sonia.scm.store.ConfigurationStoreFactory;
@@ -13,15 +12,11 @@ import sonia.scm.store.InMemoryConfigurationStoreFactory;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GroupManagerServiceTest {
 
 
-  @Mock
   ConfigurationStore<AllGroupManagers> store;
 
   ConfigurationStoreFactory configurationStoreFactory ;
@@ -32,7 +27,8 @@ class GroupManagerServiceTest {
 
   @BeforeEach
   void init() {
-    configurationStoreFactory = new InMemoryConfigurationStoreFactory(store);
+    configurationStoreFactory = new InMemoryConfigurationStoreFactory();
+    store = configurationStoreFactory.withType(AllGroupManagers.class).withName("groupManager").build();
     service = new GroupManagerService(configurationStoreFactory);
   }
 
@@ -44,7 +40,7 @@ class GroupManagerServiceTest {
     groupManagers.setManagers(Lists.newArrayList("user_1", "user_2"));
     allGroupManagers.getGroupManagers().put("group_1", groupManagers);
     allGroupManagers.getGroupManagers().put("group_2", groupManagers);
-    when(store.get()).thenReturn(allGroupManagers);
+    store.set(allGroupManagers);
     List<String> groups = service.getManagedGroups("user_1");
     assertThat(groups).containsExactlyInAnyOrder("group_1", "group_2");
   }
@@ -56,12 +52,11 @@ class GroupManagerServiceTest {
     groupManagers.setManagers(Lists.newArrayList("user_1", "user_2"));
     allGroupManagers.getGroupManagers().put("group_1", groupManagers);
     allGroupManagers.getGroupManagers().put("group_2", groupManagers);
-    when(store.get()).thenReturn(allGroupManagers);
+    store.set(allGroupManagers);
     service.set(groupManagers, "group_3");
-    verify(store).set(argThat(allGroupManagers1 -> {
-      assertThat(allGroupManagers1.getGroupManagers().keySet()).containsExactlyInAnyOrder("group_1", "group_2", "group_3");
-      return true;
-    }));
+
+    assertThat(allGroupManagers.getGroupManagers().keySet()).containsExactlyInAnyOrder("group_1", "group_2", "group_3");
+
   }
 
 }
