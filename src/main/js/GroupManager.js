@@ -9,7 +9,7 @@ import {
   AutocompleteAddEntryToTableField,
   LabelWithHelpIcon,
   Loading,
-  MemberNameTable,
+  MemberNameTagGroup,
   SubmitButton
 } from "@scm-manager/ui-components";
 import Notification from "@scm-manager/ui-components/src/Notification";
@@ -142,7 +142,7 @@ class GroupManager extends React.Component<Props, State> {
           label={t("scm-groupmanager-plugin.add-manager-form.header")}
           helpText={t("scm-groupmanager-plugin.add-manager-form.help-text")}
         />
-        <MemberNameTable
+        <MemberNameTagGroup
           members={groupManagers}
           memberListChanged={this.handleChange}
         />
