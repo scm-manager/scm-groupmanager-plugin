@@ -7,13 +7,12 @@ import { translate } from "react-i18next";
 import {
   apiClient,
   AutocompleteAddEntryToTableField,
-  LabelWithHelpIcon,
   Loading,
+  Notification,
+  ErrorNotification,
   MemberNameTagGroup,
   SubmitButton
 } from "@scm-manager/ui-components";
-import Notification from "@scm-manager/ui-components/src/Notification";
-import ErrorNotification from "@scm-manager/ui-components/src/ErrorNotification";
 
 type Props = {
   group: Group,
