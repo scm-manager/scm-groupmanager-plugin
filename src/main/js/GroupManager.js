@@ -138,13 +138,11 @@ class GroupManager extends React.Component<Props, State> {
     return (
       <>
         {message}
-        <LabelWithHelpIcon
-          label={t("scm-groupmanager-plugin.add-manager-form.header")}
-          helpText={t("scm-groupmanager-plugin.add-manager-form.help-text")}
-        />
         <MemberNameTagGroup
           members={groupManagers}
           memberListChanged={this.handleChange}
+          label={t("scm-groupmanager-plugin.add-manager-form.header")}
+          helpText={t("scm-groupmanager-plugin.add-manager-form.help-text")}
         />
 
         <AutocompleteAddEntryToTableField
