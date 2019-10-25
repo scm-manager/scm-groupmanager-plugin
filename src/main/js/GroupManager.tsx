@@ -1,9 +1,8 @@
-// @flow
 import React from "react";
 import { connect } from "react-redux";
-import type { Group } from "@scm-manager/ui-types";
+import { Group } from "@scm-manager/ui-types";
 import { withRouter } from "react-router-dom";
-import { translate } from "react-i18next";
+import { WithTranslation, withTranslation } from "react-i18next";
 import {
   apiClient,
   AutocompleteAddEntryToTableField,
@@ -14,17 +13,16 @@ import {
   SubmitButton
 } from "@scm-manager/ui-components";
 
-type Props = {
-  group: Group,
-  autocompleteLink: string,
-  t: string => string
+type Props = WithTranslation & {
+  group: Group;
+  autocompleteLink: string;
 };
 
 type State = {
-  groupManagers: string[],
-  loading: boolean,
-  success?: boolean,
-  error?: string
+  groupManagers: string[];
+  loading: boolean;
+  success?: boolean;
+  error?: string;
 };
 
 class GroupManager extends React.Component<Props, State> {
@@ -56,8 +54,12 @@ class GroupManager extends React.Component<Props, State> {
         return groupManagers;
       })
       .catch(err => {
-        this.setState({ loading: false });
-        return { error: err };
+        this.setState({
+          loading: false
+        });
+        return {
+          error: err
+        };
       });
   }
 
@@ -66,20 +68,31 @@ class GroupManager extends React.Component<Props, State> {
     const managers = this.state.groupManagers;
     if (url) {
       apiClient
-        .put(url, { managers })
+        .put(url, {
+          managers
+        })
         .then(response => {
-          this.setState({ success: true });
+          this.setState({
+            success: true
+          });
           return response;
         })
         .catch(err => {
-          this.setState({ success: false, error: err });
-          return { error: err };
+          this.setState({
+            success: false,
+            error: err
+          });
+          return {
+            error: err
+          };
         });
     }
   };
 
   handleChange = (groupManagers: string[]) => {
-    this.setState({ groupManagers });
+    this.setState({
+      groupManagers
+    });
   };
 
   loadUserAutocompletion = (inputValue: string) => {
@@ -92,9 +105,7 @@ class GroupManager extends React.Component<Props, State> {
       .then(response => response.json())
       .then(json => {
         return json.map(element => {
-          const label = element.displayName
-            ? `${element.displayName} (${element.id})`
-            : element.id;
+          const label = element.displayName ? `${element.displayName} (${element.id})` : element.id;
           return {
             value: element,
             label
@@ -124,10 +135,12 @@ class GroupManager extends React.Component<Props, State> {
       message = (
         <Notification
           type={"success"}
-          children={t(
-            "scm-groupmanager-plugin.add-manager-form.success-message"
-          )}
-          onClose={() => this.setState({ success: false })}
+          children={t("scm-groupmanager-plugin.add-manager-form.success-message")}
+          onClose={() =>
+            this.setState({
+              success: false
+            })
+          }
         />
       );
     } else if (error) {
@@ -151,15 +164,9 @@ class GroupManager extends React.Component<Props, State> {
           fieldLabel={t("scm-groupmanager-plugin.add-member-textfield.label")}
           errorMessage={t("scm-groupmanager-plugin.add-member-textfield.error")}
           loadSuggestions={this.loadUserAutocompletion}
-          placeholder={t(
-            "scm-groupmanager-plugin.add-member-autocomplete.placeholder"
-          )}
-          loadingMessage={t(
-            "scm-groupmanager-plugin.add-member-autocomplete.loading"
-          )}
-          noOptionsMessage={t(
-            "scm-groupmanager-plugin.add-member-autocomplete.no-options"
-          )}
+          placeholder={t("scm-groupmanager-plugin.add-member-autocomplete.placeholder")}
+          loadingMessage={t("scm-groupmanager-plugin.add-member-autocomplete.loading")}
+          noOptionsMessage={t("scm-groupmanager-plugin.add-member-autocomplete.no-options")}
         />
 
         <SubmitButton
@@ -173,17 +180,15 @@ class GroupManager extends React.Component<Props, State> {
   }
 }
 
-function getUserAutoCompleteLink(state: Object): string {
-  const link = getLinkCollection(state, "autocomplete").find(
-    i => i.name === "users"
-  );
+function getUserAutoCompleteLink(state: object): string {
+  const link = getLinkCollection(state, "autocomplete").find(i => i.name === "users");
   if (link) {
     return link.href;
   }
   return "";
 }
 
-function getLinkCollection(state: Object, name: string): Link[] {
+function getLinkCollection(state: object, name: string): Link[] {
   if (state.indexResources.links && state.indexResources.links[name]) {
     return state.indexResources.links[name];
   }
@@ -197,6 +202,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(
-  withRouter(translate("plugins")(GroupManager))
-);
+export default connect(mapStateToProps)(withRouter(withTranslation("plugins")(GroupManager)));
