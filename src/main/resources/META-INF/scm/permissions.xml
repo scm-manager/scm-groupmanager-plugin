@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE plugin SYSTEM "https://download.scm-manager.org/dtd/plugin/2.0.0-01.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Copyright (c) 2010, Sebastian Sdorra
@@ -26,24 +25,16 @@
     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.dd7s
 
     http://bitbucket.org/sdorra/scm-manager
 
 
 -->
-<plugin>
+<permissions>
 
-  <scm-version>2</scm-version>
+  <permission>
+    <value>group:manage:*</value>
+  </permission>
 
-  <information>
-    <displayName>Group Manager</displayName>
-    <author>Cloudogu GmbH</author>
-    <category>Authorization</category>
-  </information>
-
-  <resources>
-    <script>assets/scm-groupmanager-plugin.bundle.js</script>
-  </resources>
-
-</plugin>
+</permissions>
