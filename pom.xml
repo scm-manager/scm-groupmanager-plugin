@@ -13,7 +13,7 @@
   <packaging>smp</packaging>
   <version>2.0.0-SNAPSHOT</version>
   <name>scm-groupmanager-plugin</name>
-  <description>Notifies a remote webserver whenever a repository is pushed to</description>
+  <description>Adds the possibility to define group managers who can manage group members</description>
   <url>https://github.com/scm-manager/scm-groupmanager-plugin</url>
 
   <dependencies>
