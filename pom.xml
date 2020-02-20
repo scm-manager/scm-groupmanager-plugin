@@ -16,6 +16,20 @@
   <description>Adds the possibility to define group managers who can manage group members</description>
   <url>https://github.com/scm-manager/scm-groupmanager-plugin</url>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.openapitools.swagger</groupId>
+        <artifactId>swagger-maven-plugin</artifactId>
+        <configuration>
+          <resourcePackages>
+            <resourcePackage>sonia.scm.groupmanager.api</resourcePackage>
+          </resourcePackages>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
 
     <dependency>
