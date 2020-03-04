@@ -50,7 +50,11 @@ public class GroupManagerResource {
   @GET
   @Path("/{group_name}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Operation(summary = "Get group manager", description = "Returns the group manager for the given group.", tags = "GroupManager Plugin")
+  @Operation(
+    summary = "Get group manager",
+    description = "Returns the group manager for the given group.",
+    tags = "GroupManager Plugin",
+    operationId = "groupmanager_get_groupmanager")
   @ApiResponse(
     responseCode = "200",
     description = "success",
@@ -84,7 +88,12 @@ public class GroupManagerResource {
   @PUT
   @Path("/{group_name}")
   @Consumes(MediaType.APPLICATION_JSON)
-  @Operation(summary = "Set group managers", description = "Updates the group managers for the given group.", tags = "GroupManager Plugin")
+  @Operation(
+    summary = "Set group managers",
+    description = "Updates the group managers for the given group.",
+    tags = "GroupManager Plugin",
+    operationId = "groupmanager_set_groupmanager"
+  )
   @ApiResponse(responseCode = "204", description = "no content")
   @ApiResponse(responseCode = "401", description = "not authenticated / invalid credentials")
   @ApiResponse(responseCode = "403", description = "not authorized /  the current user does not have the \"group:manage:id\" privilege")
