@@ -161,7 +161,6 @@ class GroupManager extends React.Component<Props, State> {
           addEntry={this.addMember}
           disabled={false}
           buttonLabel={t("scm-groupmanager-plugin.add-member-button.label")}
-          fieldLabel={t("scm-groupmanager-plugin.add-member-textfield.label")}
           errorMessage={t("scm-groupmanager-plugin.add-member-textfield.error")}
           loadSuggestions={this.loadUserAutocompletion}
           placeholder={t("scm-groupmanager-plugin.add-member-autocomplete.placeholder")}

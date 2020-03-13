@@ -11,11 +11,10 @@
       "label": "Add Group Manager"
     },
     "add-member-textfield": {
-      "label": "Add Group Manager",
       "error": "Invalid user name"
     },
     "add-member-autocomplete": {
-      "placeholder": "Enter username",
+      "placeholder": "Add Group Manager",
       "loading": "Loading...",
       "no-options": "No suggestions available"
     }
