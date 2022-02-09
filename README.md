@@ -7,7 +7,7 @@
   scm-groupmanager-plugin
 </h1>
 
-The group manager plugin adds the ability to define group managers that can manage group members.
+The group manager plugin adds the possibility to define group managers who can manage group members.
 
 ## Usage
 
