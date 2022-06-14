@@ -10,9 +10,6 @@
     "add-member-button": {
       "label": "Add Group Manager"
     },
-    "add-member-textfield": {
-      "error": "Invalid user name"
-    },
     "add-member-autocomplete": {
       "placeholder": "Add Group Manager",
       "loading": "Loading...",

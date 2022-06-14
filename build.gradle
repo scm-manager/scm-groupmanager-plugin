@@ -23,7 +23,7 @@
  */
 
 plugins {
-  id 'org.scm-manager.smp' version '0.10.1'
+  id 'org.scm-manager.smp' version '0.11.1'
 }
 
 dependencies {
@@ -33,7 +33,7 @@ dependencies {
 }
 
 scmPlugin {
-  scmVersion = "2.0.0"
+  scmVersion = "2.20.0"
   displayName = "Group Manager"
   description = "Adds the possibility to define group managers who can manage group members"
   author = "Cloudogu GmbH"

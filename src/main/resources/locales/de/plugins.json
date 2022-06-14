@@ -10,9 +10,6 @@
     "add-member-button": {
       "label": "Group Manager hinzufügen"
     },
-    "add-member-textfield": {
-      "error": "Ungültiger Benutzername"
-    },
     "add-member-autocomplete": {
       "placeholder": "Group Manager hinzufügen",
       "loading": "Lade...",

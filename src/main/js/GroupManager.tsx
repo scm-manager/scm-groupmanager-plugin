@@ -21,113 +21,83 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import React from "react";
-import { connect } from "react-redux";
-import { Group } from "@scm-manager/ui-types";
-import { withRouter } from "react-router-dom";
-import { WithTranslation, withTranslation } from "react-i18next";
+import React, { FC, useEffect, useState } from "react";
+import { AutocompleteObject, Group, Link } from "@scm-manager/ui-types";
+import { useTranslation } from "react-i18next";
 import {
   apiClient,
   AutocompleteAddEntryToTableField,
-  Loading,
-  Notification,
   ErrorNotification,
+  Loading,
   MemberNameTagGroup,
+  Notification,
   SubmitButton
 } from "@scm-manager/ui-components";
+import { useIndex } from "@scm-manager/ui-api";
 
-type Props = WithTranslation & {
+type Props = {
   group: Group;
-  autocompleteLink: string;
 };
 
-type State = {
-  groupManagers: string[];
-  loading: boolean;
-  success?: boolean;
-  error?: string;
-};
+const GroupManager: FC<Props> = ({ group }) => {
+  const [t] = useTranslation("plugins");
+  const [groupManagers, setGroupManagers] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const { data: index } = useIndex();
 
-class GroupManager extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      groupManagers: [],
-      loading: true
-    };
-  }
+  useEffect(() => {
+    getGroupManagers().then(r => r);
+  }, [group]);
 
-  componentDidMount(): void {
-    this.getGroupManagers().then(groupManagers => {
-      if (groupManagers) {
-        this.setState({
-          groupManagers: !groupManagers.managers ? [] : groupManagers.managers,
-          loading: false
-        });
-      }
-    });
-  }
-
-  getGroupManagers() {
-    const url = this.props.group._links.managers.href;
+  const getGroupManagers = () => {
     return apiClient
-      .get(url)
+      .get((group._links.managers as Link).href)
       .then(response => response.json())
-      .then(groupManagers => {
-        return groupManagers;
+      .then(gm => {
+        if (gm) {
+          setGroupManagers(!gm.managers ? [] : gm.managers);
+          setLoading(false);
+        }
       })
       .catch(err => {
-        this.setState({
-          loading: false
-        });
-        return {
-          error: err
-        };
+        setLoading(false);
+        setError(err);
       });
-  }
+  };
 
-  submit = () => {
-    const url = this.props.group._links.managers.href;
-    const managers = this.state.groupManagers;
-    if (url) {
-      apiClient
-        .put(url, {
-          managers
-        })
-        .then(response => {
-          this.setState({
-            success: true
-          });
-          return response;
-        })
-        .catch(err => {
-          this.setState({
-            success: false,
-            error: err
-          });
-          return {
-            error: err
-          };
-        });
+  const submit = () => {
+    apiClient
+      .put((group._links.managers as Link).href, {
+        managers: groupManagers
+      })
+      .then(() => {
+        setSuccess(true);
+      })
+      .catch(err => {
+        setSuccess(false);
+        setError(err);
+      });
+  };
+
+  const getUserAutoCompleteLink = (): string => {
+    if (index) {
+      const link = (index._links.autocomplete as Link[]).find(i => i.name === "users");
+      if (link) {
+        return link.href;
+      }
     }
+    return "";
   };
 
-  handleChange = (groupManagers: string[]) => {
-    this.setState({
-      groupManagers
-    });
-  };
-
-  loadUserAutocompletion = (inputValue: string) => {
-    return this.loadAutocompletion(this.props.autocompleteLink, inputValue);
-  };
-
-  loadAutocompletion(url: string, inputValue: string) {
-    const link = url + "?q=";
+  const loadAutocompletion = (inputValue: string) => {
+    let userAutoCompleteLink = getUserAutoCompleteLink();
+    const link = userAutoCompleteLink + "?q=";
     return fetch(link + inputValue)
       .then(response => response.json())
       .then(json => {
-        return json.map(element => {
+        return json.map((element: AutocompleteObject) => {
           const label = element.displayName ? `${element.displayName} (${element.id})` : element.id;
           return {
             value: element,
@@ -135,93 +105,53 @@ class GroupManager extends React.Component<Props, State> {
           };
         });
       });
-  }
-
-  addMember = (value: SelectValue) => {
-    const { groupManagers } = this.state;
-    groupManagers.push(value.value.id);
-    this.setState({
-      groupManagers
-    });
   };
 
-  render() {
-    const { t } = this.props;
-    const { groupManagers, loading, success, error } = this.state;
+  if (loading) {
+    return <Loading />;
+  }
+  let message = null;
 
-    if (loading) {
-      return <Loading />;
-    }
-    let message = null;
-
-    if (success) {
-      message = (
-        <Notification
-          type={"success"}
-          children={t("scm-groupmanager-plugin.add-manager-form.success-message")}
-          onClose={() =>
-            this.setState({
-              success: false
-            })
-          }
-        />
-      );
-    } else if (error) {
-      message = <ErrorNotification error={error.message} />;
-    }
-
-    return (
-      <>
-        {message}
-        <MemberNameTagGroup
-          members={groupManagers}
-          memberListChanged={this.handleChange}
-          label={t("scm-groupmanager-plugin.add-manager-form.header")}
-          helpText={t("scm-groupmanager-plugin.add-manager-form.help-text")}
-        />
-
-        <AutocompleteAddEntryToTableField
-          addEntry={this.addMember}
-          disabled={false}
-          buttonLabel={t("scm-groupmanager-plugin.add-member-button.label")}
-          errorMessage={t("scm-groupmanager-plugin.add-member-textfield.error")}
-          loadSuggestions={this.loadUserAutocompletion}
-          placeholder={t("scm-groupmanager-plugin.add-member-autocomplete.placeholder")}
-          loadingMessage={t("scm-groupmanager-plugin.add-member-autocomplete.loading")}
-          noOptionsMessage={t("scm-groupmanager-plugin.add-member-autocomplete.no-options")}
-        />
-
-        <SubmitButton
-          label={t("scm-groupmanager-plugin.add-manager-form.submit")}
-          action={this.submit}
-          loading={loading}
-          disabled={false}
-        />
-      </>
+  if (success) {
+    message = (
+      <Notification
+        type="success"
+        children={t("scm-groupmanager-plugin.add-manager-form.success-message")}
+        onClose={() => setSuccess(false)}
+      />
     );
+  } else if (error) {
+    message = <ErrorNotification error={error} />;
   }
-}
 
-function getUserAutoCompleteLink(state: object): string {
-  const link = getLinkCollection(state, "autocomplete").find(i => i.name === "users");
-  if (link) {
-    return link.href;
-  }
-  return "";
-}
+  return (
+    <>
+      {message}
+      <MemberNameTagGroup
+        members={groupManagers}
+        memberListChanged={members => setGroupManagers(members)}
+        label={t("scm-groupmanager-plugin.add-manager-form.header")}
+        helpText={t("scm-groupmanager-plugin.add-manager-form.help-text")}
+      />
 
-function getLinkCollection(state: object, name: string): Link[] {
-  if (state.indexResources.links && state.indexResources.links[name]) {
-    return state.indexResources.links[name];
-  }
-  return [];
-}
+      <AutocompleteAddEntryToTableField
+        addEntry={member => setGroupManagers([...groupManagers, member.value.id])}
+        disabled={false}
+        buttonLabel={t("scm-groupmanager-plugin.add-member-button.label")}
+        loadSuggestions={loadAutocompletion}
+        placeholder={t("scm-groupmanager-plugin.add-member-autocomplete.placeholder")}
+        loadingMessage={t("scm-groupmanager-plugin.add-member-autocomplete.loading")}
+        noOptionsMessage={t("scm-groupmanager-plugin.add-member-autocomplete.no-options")}
+      />
 
-const mapStateToProps = state => {
-  const autocompleteLink = getUserAutoCompleteLink(state);
-  return {
-    autocompleteLink
-  };
+      <SubmitButton
+        label={t("scm-groupmanager-plugin.add-manager-form.submit")}
+        action={submit}
+        loading={loading}
+        disabled={false}
+      />
+    </>
+  );
 };
 
-export default connect(mapStateToProps)(withRouter(withTranslation("plugins")(GroupManager)));
+export default GroupManager;
