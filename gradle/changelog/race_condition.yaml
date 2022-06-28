@@ -1,2 +1,0 @@
-- type: fixed
-  description: Resolve race condition with redux legacy store ([#31](https://github.com/scm-manager/scm-groupmanager-plugin/pull/31))
