@@ -1,5 +1,6 @@
 {
   "scm-groupmanager-plugin": {
+    "navLink": "Group Manager",
     "add-manager-form": {
       "header": "Group Manager List",
       "success-message": "The update was successful!",

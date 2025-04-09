@@ -26,6 +26,7 @@ import {
   Notification,
   SubmitButton
 } from "@scm-manager/ui-components";
+import { useDocumentTitle } from "@scm-manager/ui-core";
 import { useIndex } from "@scm-manager/ui-api";
 
 type Props = {
@@ -34,6 +35,7 @@ type Props = {
 
 const GroupManager: FC<Props> = ({ group }) => {
   const [t] = useTranslation("plugins");
+  useDocumentTitle(t("scm-groupmanager-plugin.navLink"), group.name);
   const [groupManagers, setGroupManagers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);

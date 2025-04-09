@@ -15,10 +15,11 @@
  */
 
 import React from "react";
+import { Route } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { binder } from "@scm-manager/ui-extensions";
 import { NavLink } from "@scm-manager/ui-components";
 import GroupManager from "./GroupManager";
-import { Route } from "react-router-dom";
 
 const groupmanagerPredicate = (props: object) => {
   return props.group && props.group._links && props.group._links.managers;
@@ -30,8 +31,9 @@ const GroupManagerRoute = ({ url, group }) => {
 
 binder.bind("group.route", GroupManagerRoute, groupmanagerPredicate);
 
-const GroupManagerNavLink = ({ url, group }) => {
-  return <NavLink to={`${url}/settings/groupmanager`} label="Managers" />;
+const GroupManagerNavLink = ({ url }) => {
+  const [t] = useTranslation("plugins");
+  return <NavLink to={`${url}/settings/groupmanager`} label={t("scm-groupmanager-plugin.navLink")} />;
 };
 
 binder.bind("group.setting", GroupManagerNavLink, groupmanagerPredicate);
