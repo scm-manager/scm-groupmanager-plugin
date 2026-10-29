@@ -15,25 +15,29 @@
  */
 
 import React from "react";
-import { Route } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { binder } from "@scm-manager/ui-extensions";
 import { NavLink } from "@scm-manager/ui-components";
+import { binder } from "@scm-manager/ui-extensions";
+import { Group, Link } from "@scm-manager/ui-types";
 import GroupManager from "./GroupManager";
+import { GROUP_MANAGER_BASE, resolveGroupManager } from "./routes";
+import { useGroup } from "@scm-manager/ui-api";
+import { useParams } from "react-router";
 
-const groupmanagerPredicate = (props: object) => {
-  return props.group && props.group._links && props.group._links.managers;
-};
-
-const GroupManagerRoute = ({ url, group }) => {
-  return <Route path={`${url}/settings/groupmanager`} render={() => <GroupManager group={group} />} />;
-};
-
-binder.bind("group.route", GroupManagerRoute, groupmanagerPredicate);
-
-const GroupManagerNavLink = ({ url }) => {
+const GroupManagerNavLink = () => {
   const [t] = useTranslation("plugins");
-  return <NavLink to={`${url}/settings/groupmanager`} label={t("scm-groupmanager-plugin.navLink")} />;
+  const { name } = useParams<{ name: string }>();
+  const { data: group } = useGroup(name);
+  return <NavLink to={resolveGroupManager(group!)} label={t("scm-groupmanager-plugin.navLink")} />;
 };
 
-binder.bind("group.setting", GroupManagerNavLink, groupmanagerPredicate);
+const groupManagerPredicate = ({ group }: { group: Group }) => (group?._links.managers as Link)?.href;
+
+binder.bind("group.setting", GroupManagerNavLink, groupManagerPredicate);
+
+const groupManagerRoute = ({ group }: { group: Group }) => ({
+  path: GROUP_MANAGER_BASE,
+  element: <GroupManager group={group} />,
+});
+
+binder.bind("group.route", groupManagerRoute);

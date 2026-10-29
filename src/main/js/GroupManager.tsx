@@ -15,19 +15,18 @@
  */
 
 import React, { FC, useEffect, useState } from "react";
-import { AutocompleteObject, Group, Link } from "@scm-manager/ui-types";
 import { useTranslation } from "react-i18next";
-import {
-  apiClient,
-  AutocompleteAddEntryToTableField,
-  ErrorNotification,
-  Loading,
-  MemberNameTagGroup,
-  Notification,
-  SubmitButton
-} from "@scm-manager/ui-components";
-import { useDocumentTitle } from "@scm-manager/ui-core";
 import { useIndex } from "@scm-manager/ui-api";
+import { apiClient, MemberNameTagGroup } from "@scm-manager/ui-components";
+import {
+  Loading,
+  ErrorNotification,
+  Notification,
+  Button,
+  useDocumentTitle,
+  ComboboxField,
+} from "@scm-manager/ui-core";
+import { AutocompleteObject, Group, Link, Option } from "@scm-manager/ui-types";
 
 type Props = {
   group: Group;
@@ -40,45 +39,28 @@ const GroupManager: FC<Props> = ({ group }) => {
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const { data: index } = useIndex();
+  const index = useIndex();
 
   useEffect(() => {
-    getGroupManagers().then(r => r);
+    getGroupManagers();
   }, [group]);
 
-  const getGroupManagers = () => {
-    return apiClient
-      .get((group._links.managers as Link).href)
-      .then(response => response.json())
-      .then(gm => {
-        if (gm) {
-          setGroupManagers(!gm.managers ? [] : gm.managers);
-          setLoading(false);
-        }
-      })
-      .catch(err => {
-        setLoading(false);
-        setError(err);
-      });
-  };
-
-  const submit = () => {
-    apiClient
-      .put((group._links.managers as Link).href, {
-        managers: groupManagers
-      })
-      .then(() => {
-        setSuccess(true);
-      })
-      .catch(err => {
-        setSuccess(false);
-        setError(err);
-      });
+  const getGroupManagers = async () => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get((group._links.managers as Link).href);
+      const gm = await response.json();
+      setGroupManagers(gm?.managers || []);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getUserAutoCompleteLink = (): string => {
     if (index) {
-      const link = (index._links.autocomplete as Link[]).find(i => i.name === "users");
+      const link = (index._links.autocomplete as Link[]).find((i) => i.name === "users");
       if (link) {
         return link.href;
       }
@@ -86,65 +68,95 @@ const GroupManager: FC<Props> = ({ group }) => {
     return "";
   };
 
-  const loadAutocompletion = (inputValue: string) => {
-    let userAutoCompleteLink = getUserAutoCompleteLink();
+  const loadAutocompletion = (query: string) => {
+    if (query.length < 2) {
+      return [];
+    }
+
+    const userAutoCompleteLink = getUserAutoCompleteLink();
     const link = userAutoCompleteLink + "?q=";
-    return fetch(link + inputValue)
-      .then(response => response.json())
-      .then(json => {
-        return json.map((element: AutocompleteObject) => {
+
+    return fetch(link + query)
+      .then((response) => response.json())
+      .then((json) => {
+        const apiResults = json.map((element: AutocompleteObject) => {
           const label = element.displayName ? `${element.displayName} (${element.id})` : element.id;
           return {
             value: element,
-            label
+            label,
           };
         });
+
+        const exactMatch = apiResults.find((o: any) => o.value.id.toLowerCase() === query.toLowerCase());
+
+        if (!exactMatch) {
+          const customOption = {
+            value: { id: query, displayName: query },
+            label: `${query}`,
+          };
+          return [customOption, ...apiResults];
+        }
+
+        return apiResults;
       });
   };
 
-  if (loading) {
-    return <Loading />;
-  }
-  let message = null;
+  const onSelectFromAutocomplete = (option?: Option<AutocompleteObject>) => {
+    if (option?.value?.id) {
+      addManager(option.value.id);
+    }
+  };
 
-  if (success) {
-    message = (
-      <Notification
-        type="success"
-        children={t("scm-groupmanager-plugin.add-manager-form.success-message")}
-        onClose={() => setSuccess(false)}
-      />
-    );
-  } else if (error) {
-    message = <ErrorNotification error={error} />;
-  }
+  const addManager = (managerName: string) => {
+    if (managerName && !groupManagers.includes(managerName)) {
+      setGroupManagers([...groupManagers, managerName]);
+    }
+  };
+
+  const saveChanges = () => {
+    apiClient
+      .put((group._links.managers as Link).href, { managers: groupManagers })
+      .then(() => setSuccess(true))
+      .catch(setError);
+  };
+
+  if (loading) return <Loading />;
 
   return (
     <>
-      {message}
+      {success && (
+        <Notification
+          type="success"
+          children={t("scm-groupmanager-plugin.add-manager-form.success-message")}
+          onClose={() => setSuccess(false)}
+        />
+      )}
+      {error && <ErrorNotification error={error} />}
+
       <MemberNameTagGroup
         members={groupManagers}
-        memberListChanged={members => setGroupManagers(members)}
+        memberListChanged={setGroupManagers}
         label={t("scm-groupmanager-plugin.add-manager-form.header")}
         helpText={t("scm-groupmanager-plugin.add-manager-form.help-text")}
       />
 
-      <AutocompleteAddEntryToTableField
-        addEntry={member => setGroupManagers([...groupManagers, member.value.id])}
-        disabled={false}
-        buttonLabel={t("scm-groupmanager-plugin.add-member-button.label")}
-        loadSuggestions={loadAutocompletion}
-        placeholder={t("scm-groupmanager-plugin.add-member-autocomplete.placeholder")}
-        loadingMessage={t("scm-groupmanager-plugin.add-member-autocomplete.loading")}
-        noOptionsMessage={t("scm-groupmanager-plugin.add-member-autocomplete.no-options")}
+      <ComboboxField
+        label={t("scm-groupmanager-plugin.add-manager-form.input")}
+        options={loadAutocompletion}
+        onChange={onSelectFromAutocomplete}
+        value={null}
       />
 
-      <SubmitButton
-        label={t("scm-groupmanager-plugin.add-manager-form.submit")}
-        action={submit}
-        loading={loading}
-        disabled={false}
-      />
+      <hr />
+
+      <div className="level">
+        <div className="level-left" />
+        <div className="level-right">
+          <Button variant="primary" isLoading={loading} onClick={saveChanges}>
+            {t("scm-groupmanager-plugin.add-manager-form.submit")}
+          </Button>
+        </div>
+      </div>
     </>
   );
 };

@@ -1,8 +1,16 @@
 {
   "scm-groupmanager-plugin": {
     "navLink": "Group Manager",
+    "edit": {
+      "userSelect": {
+        "label": "Group Manager Liste",
+        "helpText": "Die Liste der Group Manager.",
+        "placeholder": "Group Manager hinzufügen"
+      }
+    },
     "add-manager-form": {
       "header": "Group Manager Liste",
+      "input": "User als Group Manager hinzufügen",
       "success-message": "Das Update war erfolgreich.",
       "help-text": "Die Liste der Group Manager.",
       "add-manager": "Group Manager hinzufügen",
